@@ -33,7 +33,7 @@ https://github.com/benhoyt/inih
 #include <iterator>
 #include <unordered_map>
 
-namespace inireader {
+namespace inih {
 
 /* Typedef for prototype of handler function. */
 typedef int (*ini_handler)(void* user, const char* section,
@@ -91,8 +91,7 @@ inline static char* strncpy0(char* dest, const char* src, size_t size)
 }
 
 /* See documentation in header file. */
-inline int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,
-                     void* user)
+inline int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler, void* user)
 {
     char* line;
     char section[MAX_SECTION] = "";

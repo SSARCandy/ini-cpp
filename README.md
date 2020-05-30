@@ -1,6 +1,6 @@
 # C++ INI Parser
 
-Yet another `.ini` parser for modern c++ (made for cpp17), inspired by [inih](https://github.com/benhoyt/inih)
+Yet another `.ini` parser for modern c++ (made for cpp17), inspired and extend from [inih](https://github.com/benhoyt/inih)
 
 
 ## Example
@@ -36,6 +36,8 @@ any=5
 [section2]
 any_vec = 1 2 3
 ```
+
+To learn more, please refer to `test/`, it covered ALL utilities.
 
 ## Install
 

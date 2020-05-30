@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 
 
-using namespace inireader;
+using namespace inih;
 
 TEST(INIReader, get_any_single_value) {
     INIReader r{"./fixtures/config.ini"};
@@ -32,4 +32,8 @@ TEST(INIReader, get_any_vector) {
         EXPECT_EQ(vec1[i], ans1[i]);
         EXPECT_EQ(vec2[i], ans2[i]);
     }
+}
+
+TEST(INIReader, exception) {
+    
 }

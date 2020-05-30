@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include "ini/INIReader.h"
-using namespace inireader;
+using namespace inih;
 
 int main() {
     INIReader r{"./test/fixtures/config.ini"};
