@@ -1,6 +1,9 @@
 # C++ INI Parser
 
-Yet another `.ini` parser for modern c++ (made for cpp17), inspired and extend from [inih](https://github.com/benhoyt/inih)
+[![Build Status](https://travis-ci.org/SSARCandy/ini-cpp.svg?branch=master)](https://travis-ci.org/SSARCandy/ini-cpp)
+[![codecov](https://codecov.io/gh/SSARCandy/ini-cpp/branch/master/graph/badge.svg)](https://codecov.io/gh/SSARCandy/ini-cpp)
+  
+Yet another `.ini` parser for modern c++ (made for cpp17), inspired and extend from [inih](https://github.com/benhoyt/inih).
 
 
 ## Example
@@ -37,7 +40,7 @@ any=5
 any_vec = 1 2 3
 ```
 
-To learn more, please refer to `test/`, it covered ALL utilities.
+To learn more, please refer to [test folder](https://github.com/SSARCandy/ini-cpp/tree/master/test), it covered ALL utilities.
 
 ## Install
 
