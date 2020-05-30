@@ -17,5 +17,7 @@ IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 ENDIF()
 
+add_executable(example example.cpp)
+
 add_subdirectory(googletest)
 add_subdirectory(test)
