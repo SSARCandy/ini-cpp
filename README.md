@@ -10,7 +10,7 @@ Yet another `.ini` parser for modern c++ (made for cpp17), inspired and extend f
 
 ```cpp
 #include "ini/INIReader.h"
-using namespace inireader;
+using namespace inih;
 
 int main() {
     INIReader r{"./test/fixtures/config.ini"};
