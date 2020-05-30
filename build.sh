@@ -42,6 +42,16 @@ clean() {
 test() {
     cd ./build/test;
     ./all_test
+    cd $CURDIR;
+
+    lcov \
+        --capture \
+        --directory build/test/ \
+        --output-file coverage.info \
+        --test-name coverageHtml
+
+    lcov  -o coverage.info --extract coverage.info "${CURDIR}/ini/*"
+    genhtml -o .coverage coverage.info
 }
 
 

@@ -1,0 +1,16 @@
+language: cpp
+compiler: gcc
+dist: bionic
+sudo: true
+
+
+addons:
+  apt:
+    packages: clang-format colordiff lcov
+
+script:
+  - ./build.sh -t
+  - ./build.sh -c
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
