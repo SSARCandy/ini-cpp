@@ -48,9 +48,9 @@ test() {
         --capture \
         --directory build/test/ \
         --output-file coverage.info \
-        --test-name coverageHtml
+        --test-name coverageHtml > /dev/null
 
-    lcov  -o coverage.info --extract coverage.info "${CURDIR}/ini/*"
+    lcov  -o coverage.info --extract coverage.info "${CURDIR}/ini/*" > /dev/null
     genhtml -o .coverage coverage.info
 }
 
