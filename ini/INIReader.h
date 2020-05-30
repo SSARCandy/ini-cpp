@@ -264,29 +264,21 @@ inline T INIReader::Get(std::string section, std::string name) const {
         throw std::runtime_error("key " + key + " not found.");
     }
     
-    if constexpr (std::is_same<T, int>()) {
-        return std::stoi(_values.at(key));
-    } else if constexpr (std::is_same<T, float>()) {
-        return std::stof(_values.at(key));
-    } else if constexpr (std::is_same<T, double>()) {
-        return std::stod(_values.at(key));
-    } else if constexpr (std::is_same<T, long>()) {
-        return std::stol(_values.at(key));
-    } else if constexpr (std::is_same<T, unsigned long>()) {
-        return std::stoul(_values.at(key));
-    } else if constexpr (std::is_same<T, std::string>()) {
+    if constexpr (std::is_same<T, std::string>()) {
         return _values.at(key);
     } else if constexpr (std::is_same<T, bool>()) {
         std::string s{_values.at(key)};
         std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     
         const std::unordered_map<std::string, bool> s2b{
-            {"true", true}, {"yes", true}, {"on", true},
-            {"false", false}, {"no", false}, {"off", false},
+            {"1", true}, {"true", true}, {"yes", true}, {"on", true},
+            {"0", false}, {"false", false}, {"no", false}, {"off", false},
         };
         return s2b.find(s)->second;
     } else {
-        throw std::runtime_error("unsupport type.");
+        T v{};
+        std::istringstream{_values.at(key)} >> v;
+        return v;
     }
 }
 
