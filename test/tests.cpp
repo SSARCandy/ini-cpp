@@ -35,5 +35,13 @@ TEST(INIReader, get_any_vector) {
 }
 
 TEST(INIReader, exception) {
+
+    // file not found
+    EXPECT_THROW(INIReader{"QQ"}, std::runtime_error);
+
+    INIReader r{"./fixtures/config.ini"};
+
+    EXPECT_THROW(r.Get<int>("section1", "not_int"), std::runtime_error);
+    EXPECT_THROW(r.GetVector<int>("section1", "not_int_arr"), std::runtime_error);
     
 }

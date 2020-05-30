@@ -261,6 +261,9 @@ protected:
     std::set<std::string> _sections;
     static std::string MakeKey(std::string section, std::string name);
     static int ValueHandler(void* user, const char* section, const char* name, const char* value);
+
+    template<typename T>
+    T Converter(std::string s) const;
 };
 
 #endif  // __INIREADER_H__
@@ -273,26 +276,31 @@ protected:
 inline INIReader::INIReader(std::string filename)
 {
     _error = ini_parse(filename.c_str(), ValueHandler, this);
-    switch (_error)
-    {
-    case -1:
-        throw std::runtime_error("file: " + filename + " not found.");
-        break;
-    case -2:
-        throw std::runtime_error("");
-        break;
-    default:
-        break;
-    }
+    ParseError();
 }
 
 inline INIReader::INIReader(FILE *file)
 {
     _error = ini_parse_file(file, ValueHandler, this);
+    ParseError();
 }
 
 inline int INIReader::ParseError() const
 {
+    switch (_error)
+    {
+    case 0:
+        break;
+    case -1:
+        throw std::runtime_error("ini file not found.");
+        break;
+    case -2:
+        throw std::runtime_error("memory alloc error");
+        break;
+    default:
+        throw std::runtime_error("parse error on line no: " + std::to_string(_error));
+        break;
+    }
     return _error;
 }
 
@@ -320,9 +328,11 @@ inline T INIReader::Get(std::string section, std::string name) const {
         };
         return s2b.find(s)->second;
     } else {
-        T v{};
-        std::istringstream{_values.at(key)} >> v;
-        return v;
+        try {
+            return Converter<T>(_values.at(key));
+        } catch (std::exception& e) {
+            throw std::runtime_error("cannot parse value in " + key + " to type<T>.");
+        }
     }
 }
 
@@ -333,9 +343,30 @@ inline std::vector<T> INIReader::GetVector(std::string section, std::string name
         throw std::runtime_error("key " + key + " not found.");
     }
 
-    std::istringstream iss(_values.at(key));
-    const std::vector<T> vs{std::istream_iterator<T>{iss}, std::istream_iterator<T>()};
-    return vs;
+    std::istringstream out{_values.at(key)};
+    const std::vector<std::string> strs{
+        std::istream_iterator<std::string>{out}, 
+        std::istream_iterator<std::string>()
+    };
+    try {
+        std::vector<T> vs{};
+        for (std::string s : strs) {
+            vs.emplace_back(Converter<T>(s));
+        }
+        return vs;
+    } catch (std::exception& e) {
+        throw std::runtime_error("cannot parse value in " + key + " to vector<T>.");
+    }
+}
+
+template<typename T>
+inline T INIReader::Converter(std::string s) const {
+    T v{};
+    std::istringstream _{s};
+    _.exceptions(std::ios::failbit);
+
+    _ >> v;
+    return v;
 }
 
 inline std::string INIReader::MakeKey(const std::string section, const std::string name)
