@@ -45,8 +45,10 @@ typedef char* (*ini_reader)(char* str, int num, void* stream);
 
 #define INI_STOP_ON_FIRST_ERROR 1
 #define INI_MAX_LINE 200
+#define INI_INITIAL_ALLOC 200
 #define MAX_SECTION 50
 #define MAX_NAME 50
+#define INI_START_COMMENT_PREFIXES ";#"
 #define INI_INLINE_COMMENT_PREFIXES ";"
 
 
@@ -90,12 +92,18 @@ inline static char* strncpy0(char* dest, const char* src, size_t size)
     return dest;
 }
 
+
 /* See documentation in header file. */
 inline int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler, void* user)
 {
+    /* Uses a fair bit of stack (use heap instead if you need to) */
     char* line;
+    size_t max_line = INI_INITIAL_ALLOC;
+    char* new_line;
+    size_t offset;
     char section[MAX_SECTION] = "";
     char prev_name[MAX_NAME] = "";
+
     char* start;
     char* end;
     char* name;
@@ -103,13 +111,37 @@ inline int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler
     int lineno = 0;
     int error = 0;
 
-    line = (char*)malloc(INI_MAX_LINE);
+    line = (char*)malloc(INI_INITIAL_ALLOC);
     if (!line) {
         return -2;
     }
 
+#if INI_HANDLER_LINENO
+#define HANDLER(u, s, n, v) handler(u, s, n, v, lineno)
+#else
+#define HANDLER(u, s, n, v) handler(u, s, n, v)
+#endif
+
     /* Scan through stream line by line */
-    while (reader(line, INI_MAX_LINE, stream) != NULL) {
+    while (reader(line, (int)max_line, stream) != NULL) {
+        offset = strlen(line);
+        while (offset == max_line - 1 && line[offset - 1] != '\n') {
+            max_line *= 2;
+            if (max_line > INI_MAX_LINE)
+                max_line = INI_MAX_LINE;
+            new_line = (char*)realloc(line, max_line);
+            if (!new_line) {
+                free(line);
+                return -2;
+            }
+            line = new_line;
+            if (reader(line + offset, (int)(max_line - offset), stream) == NULL)
+                break;
+            if (max_line >= INI_MAX_LINE)
+                break;
+            offset += strlen(line + offset);
+        }
+
         lineno++;
 
         start = line;
@@ -120,9 +152,8 @@ inline int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler
         }
         start = lskip(rstrip(start));
 
-        if (*start == ';' || *start == '#') {
-            /* Per Python configparser, allow both ; and # comments at the
-               start of a line */
+        if (strchr(INI_START_COMMENT_PREFIXES, *start)) {
+            /* Start-of-line comment */
         }
         else if (*start == '[') {
             /* A "[section]" line */
@@ -143,15 +174,16 @@ inline int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler
             if (*end == '=' || *end == ':') {
                 *end = '\0';
                 name = rstrip(start);
-                value = lskip(end + 1);
+                value = end + 1;
                 end = find_chars_or_comment(value, NULL);
                 if (*end)
                     *end = '\0';
+                value = lskip(value);
                 rstrip(value);
 
                 /* Valid name[=:]value pair found, call handler */
                 strncpy0(prev_name, name, sizeof(prev_name));
-                if (!handler(user, section, name, value) && !error)
+                if (!HANDLER(user, section, name, value) && !error)
                     error = lineno;
             }
             else if (!error) {
@@ -163,6 +195,8 @@ inline int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler
         if (error)
             break;
     }
+
+    free(line);
 
     return error;
 }
@@ -239,6 +273,17 @@ protected:
 inline INIReader::INIReader(std::string filename)
 {
     _error = ini_parse(filename.c_str(), ValueHandler, this);
+    switch (_error)
+    {
+    case -1:
+        throw std::runtime_error("file: " + filename + " not found.");
+        break;
+    case -2:
+        throw std::runtime_error("");
+        break;
+    default:
+        break;
+    }
 }
 
 inline INIReader::INIReader(FILE *file)
