@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 
-PROJECT(Coherent-Line-Drawing)
+PROJECT(ini-cpp-parser)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
 
@@ -17,5 +17,5 @@ IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 ENDIF()
 
-
+add_subdirectory(googletest)
 add_subdirectory(test)

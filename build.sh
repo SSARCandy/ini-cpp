@@ -5,6 +5,7 @@ PROGNAME=${0##*/}
 CURDIR="$( cd "$(dirname "$0")" ; pwd -P )"
 BUILD_TYPE="Release"
 BUILD_DIR="build"
+TEST="False"
 
 if which nproc; then
     # Linux
@@ -29,12 +30,18 @@ cat <<EOF
     -c, --clean       Clean build
     -d, --debug       Build with debug mode
     -j, --jobs        Use N cores to build
+    -t, --tetst       Build Debug and run tests
 
 EOF
 }
 
 clean() {
     rm -rf "$BUILD_DIR"
+}
+
+test() {
+    cd ./build/test;
+    ./all_test
 }
 
 
@@ -50,6 +57,11 @@ while (( "$#" )); do
             ;;
         -d|--debug)
             BUILD_TYPE="Debug"
+            shift
+            ;;
+        -t|--test)
+            BUILD_TYPE="Debug"
+            TEST="True"
             shift
             ;;
         -c|--clean)
@@ -71,6 +83,10 @@ mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
 if cmake .. ${BUILD_OPTIONS}; then
     make -j "${JOBS}" && cd "$CURDIR"
+    if [ "${TEST}" == "True" ]; then
+        test
+        cd "$CURDIR"
+    fi
 else
     cd "$CURDIR"
     exit 1

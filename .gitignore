@@ -1,3 +1,4 @@
+.vscode/
 build/
 
 # Created by https://www.gitignore.io/api/c++,cmake,visualstudiocode
