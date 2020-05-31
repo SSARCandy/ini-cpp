@@ -1,5 +1,6 @@
 # C++ INI Parser
 
+![C/C++ CI](https://github.com/SSARCandy/ini-cpp/workflows/C/C++%20CI/badge.svg?branch=master)
 [![Build Status](https://travis-ci.org/SSARCandy/ini-cpp.svg?branch=master)](https://travis-ci.org/SSARCandy/ini-cpp)
 [![codecov](https://codecov.io/gh/SSARCandy/ini-cpp/branch/master/graph/badge.svg)](https://codecov.io/gh/SSARCandy/ini-cpp)
   
