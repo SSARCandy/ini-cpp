@@ -9,7 +9,6 @@ TEST(INIReader, get_single_value) {
     INIReader r{"./fixtures/config.ini"};
 
     EXPECT_EQ(r.Get<std::string>("section1", "any"), std::string("1"));
-    EXPECT_EQ(r.Get<int>("section1", "any"), int(1));
     EXPECT_EQ(r.Get<float>("section1", "any"), float(1.0));
     EXPECT_EQ(r.Get<double>("section1", "any"), double(1.0));
     EXPECT_EQ(r.Get<long>("section1", "any"), long(1));
@@ -69,11 +68,17 @@ TEST(INIReader, get_vector_with_default) {
 
 TEST(INIReader, exception) {
 
-    // file not found
-    EXPECT_THROW(INIReader{"QQ"}, std::runtime_error);
+    
+    EXPECT_THROW(INIReader{"QQ"}, std::runtime_error); // file not found
+    EXPECT_THROW(INIReader{"./fixtures/bad_file.ini"}, std::runtime_error); // parse error
 
     INIReader r{"./fixtures/config.ini"};
 
+    // key not found error
+    EXPECT_THROW(r.Get<int>("section1", "not_exist"), std::runtime_error);
+    EXPECT_THROW(r.GetVector<int>("section1", "not_exist"), std::runtime_error);
+
+    // parse error
     EXPECT_THROW(r.Get<int>("section1", "not_int"), std::runtime_error);
     EXPECT_THROW(r.GetVector<int>("section1", "not_int_arr"), std::runtime_error);
     
