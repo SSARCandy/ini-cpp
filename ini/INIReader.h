@@ -249,13 +249,13 @@ public:
     // Return the list of sections found in ini file
     const std::set<std::string>& Sections() const;
 
-    template<typename T>
+    template<typename T = std::string>
     T Get(std::string section, std::string name) const;
 
     template<typename T>
     T Get(std::string section, std::string name, T&& default_v) const;
 
-    template<typename T>
+    template<typename T = std::string>
     std::vector<T> GetVector(std::string section, std::string name) const;
 
     template<typename T>
@@ -315,7 +315,7 @@ inline const std::set<std::string>& INIReader::Sections() const
     return _sections;
 }
 
-template<typename T>
+template<typename T = std::string>
 inline T INIReader::Get(std::string section, std::string name) const {
     std::string key = MakeKey(section, name);
     if (!_values.count(key)) {
@@ -351,8 +351,7 @@ inline T INIReader::Get(std::string section, std::string name, T&& default_v) co
     return Get<T>(section, name);    
 }
 
-
-template<typename T>
+template<typename T = std::string>
 inline std::vector<T> INIReader::GetVector(std::string section, std::string name) const {
     std::string key = MakeKey(section, name);
     if (!_values.count(key)) {
@@ -387,6 +386,10 @@ inline std::vector<T> INIReader::GetVector(std::string section, std::string name
 
 template<typename T>
 inline T INIReader::Converter(std::string s) const {
+    if constexpr (std::is_same<T, std::string>()) {
+        return s;
+    }
+
     T v{};
     std::istringstream _{s};
     _.exceptions(std::ios::failbit);
