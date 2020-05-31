@@ -1,4 +1,5 @@
 #include <vector>
+#include <string>
 #include "ini/INIReader.h"
 #include "gtest/gtest.h"
 
@@ -82,4 +83,14 @@ TEST(INIReader, exception) {
     EXPECT_THROW(r.Get<int>("section1", "not_int"), std::runtime_error);
     EXPECT_THROW(r.GetVector<int>("section1", "not_int_arr"), std::runtime_error);
     
+}
+
+
+TEST(INIReader, read_big_file) {
+    INIReader r{"./fixtures/bigfile.ini"};
+   
+    for (int i = 1; i <= 1000; ++i) {
+        const auto& v = r.Get<int>("section", "key" + std::to_string(i));
+        EXPECT_EQ(v, i);
+    }
 }
