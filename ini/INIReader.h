@@ -253,7 +253,13 @@ public:
     T Get(std::string section, std::string name) const;
 
     template<typename T>
+    T Get(std::string section, std::string name, T&& default_v) const;
+
+    template<typename T>
     std::vector<T> GetVector(std::string section, std::string name) const;
+
+    template<typename T>
+    std::vector<T> GetVector(std::string section, std::string name, std::vector<T> default_v) const;
 
 protected:
     int _error;
@@ -337,6 +343,16 @@ inline T INIReader::Get(std::string section, std::string name) const {
 }
 
 template<typename T>
+inline T INIReader::Get(std::string section, std::string name, T&& default_v) const {
+    std::string key = MakeKey(section, name);
+    if (!_values.count(key)) {
+        return default_v;
+    }
+    return Get<T>(section, name);    
+}
+
+
+template<typename T>
 inline std::vector<T> INIReader::GetVector(std::string section, std::string name) const {
     std::string key = MakeKey(section, name);
     if (!_values.count(key)) {
@@ -358,6 +374,16 @@ inline std::vector<T> INIReader::GetVector(std::string section, std::string name
         throw std::runtime_error("cannot parse value in " + key + " to vector<T>.");
     }
 }
+
+template<typename T>
+inline std::vector<T> INIReader::GetVector(std::string section, std::string name, std::vector<T> default_v) const {
+    std::string key = MakeKey(section, name);
+    if (!_values.count(key)) {
+        return default_v;
+    }
+    return GetVector<T>(section, name);    
+}
+
 
 template<typename T>
 inline T INIReader::Converter(std::string s) const {
