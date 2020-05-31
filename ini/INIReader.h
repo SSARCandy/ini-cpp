@@ -44,7 +44,7 @@ typedef char* (*ini_reader)(char* str, int num, void* stream);
 
 
 #define INI_STOP_ON_FIRST_ERROR 1
-#define INI_MAX_LINE 200
+#define INI_MAX_LINE 2000
 #define INI_INITIAL_ALLOC 200
 #define MAX_SECTION 50
 #define MAX_NAME 50
