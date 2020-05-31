@@ -11,21 +11,15 @@ Yet another `.ini` parser for modern c++ (made for cpp17), inspired and extend f
 
 ```cpp
 #include "ini/INIReader.h"
-using namespace inih;
 
 int main() {
-    INIReader r{"./test/fixtures/config.ini"};
+    inih::INIReader r{"./test/fixtures/config.ini"};
 
-    const std::string v = r.Get<std::string>("section1", "any"); // "5"
-    const auto& v1 = r.Get<int>("section1", "any"); // 5
-    const auto& v2 = r.Get<double>("section1", "any"); // 5.0
-
-    const std::vector<float> v3{
-        r.GetVector<float>("section2", "any_vec")
-    }; // 1, 2, 3
-    const std::vector<std::string> v4{
-        r.GetVector<std::string>("section2", "any_vec")
-    }; // "1", "2", "3"
+    const auto& v1 = r.Get<std::string>("section1", "any"); // "5"
+    const auto& v2 = r.Get<int>("section1", "any"); // 5
+    const auto& v3 = r.Get<double>("section1", "any"); // 5.0
+    const auto& v4 = r.GetVector<float>("section2", "any_vec"); // [1.0, 2.0, 3.0]
+    const auto& v5 = r.GetVector<std::string>("section2", "any_vec"); // ["1", "2", "3"]
 
     return 0;
 }
