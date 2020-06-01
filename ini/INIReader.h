@@ -401,8 +401,6 @@ inline T INIReader::Converter(std::string s) const {
 inline std::string INIReader::MakeKey(const std::string section, const std::string name)
 {
     std::string key = section + "=" + name;
-    // Convert to lower case to make section/name lookups case-insensitive
-    std::transform(key.begin(), key.end(), key.begin(), ::tolower);
     return key;
 }
 
@@ -416,6 +414,5 @@ inline int INIReader::ValueHandler(void* user, const char* section, const char* 
     reader->_sections.insert(section);
     return 1;
 }
-
-#endif  // __INIREADER__
 }
+#endif  // __INIREADER__
