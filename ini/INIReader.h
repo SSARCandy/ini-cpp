@@ -249,6 +249,9 @@ public:
     // Return the list of sections found in ini file
     const std::set<std::string> Sections() const;
 
+    // Return the list of keys in the given section
+    const std::set<std::string> Keys(std::string section) const;
+
     const std::unordered_map<std::string, std::string> Get(std::string section) const;
 
     template<typename T = std::string>
@@ -314,6 +317,16 @@ inline const std::set<std::string> INIReader::Sections() const
 {
     std::set<std::string> retval;
     for (auto const& element : _values) {
+        retval.insert(element.first);
+    }
+    return retval;
+}
+
+inline const std::set<std::string> INIReader::Keys(std::string section) const
+{
+    auto const _section = Get(section);
+    std::set<std::string> retval;
+    for (auto const& element : _section) {
         retval.insert(element.first);
     }
     return retval;
