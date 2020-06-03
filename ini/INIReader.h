@@ -273,6 +273,8 @@ protected:
 
     template<typename T>
     T Converter(std::string s) const;
+
+    const bool BoolConverter(std::string s) const;
 };
 
 #endif  // __INIREADER_H__
@@ -354,21 +356,10 @@ inline T INIReader::Get(std::string section, std::string name) const {
     if constexpr (std::is_same<T, std::string>()) {
         return value;
     } else if constexpr (std::is_same<T, bool>()) {
-        std::string s{_values.at(key)};
-        std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-    
-        const std::unordered_map<std::string, bool> s2b{
-            {"1", true}, {"true", true}, {"yes", true}, {"on", true},
-            {"0", false}, {"false", false}, {"no", false}, {"off", false},
-        };
-        return s2b.find(s)->second;
+        return BoolConverter(value);
     } else {
-        try {
-            return Converter<T>(_values.at(key));
-        } catch (std::exception& e) {
-            throw std::runtime_error("cannot parse value in " + key + " to type<T>.");
-        }
-    }
+        return Converter<T>(value);
+    };
 }
 
 template<typename T>
@@ -409,21 +400,30 @@ inline std::vector<T> INIReader::GetVector(std::string section, std::string name
     };
 }
 
-
 template<typename T>
 inline T INIReader::Converter(std::string s) const {
-    if constexpr (std::is_same<T, std::string>()) {
-        return s;
-    }
-
-    T v{};
-    std::istringstream _{s};
-    _.exceptions(std::ios::failbit);
-
-    _ >> v;
-    return v;
+    try {
+        T v{};
+        std::istringstream _{s};
+        _.exceptions(std::ios::failbit);
+        _ >> v;
+        return v;
+    } catch(std::exception& e) {
+        throw std::runtime_error("cannot parse value '" + s + "' to type<T>.");
+    };
 }
 
+inline const bool INIReader::BoolConverter(std::string s) const {
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    const std::unordered_map<std::string, bool> s2b{
+        {"1", true}, {"true", true}, {"yes", true}, {"on", true},
+        {"0", false}, {"false", false}, {"no", false}, {"off", false},
+    };
+    auto const value = s2b.find(s);
+    if (value == s2b.end()) {
+        throw std::runtime_error("'" + s + "' is not a valid boolean value.");
+    }
+    return value->second;
 }
 
 inline int INIReader::ValueHandler(void* user, const char* section, const char* name, const char* value)
