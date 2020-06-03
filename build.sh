@@ -92,7 +92,11 @@ BUILD_OPTIONS="-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
 if cmake .. ${BUILD_OPTIONS}; then
-    make -j "${JOBS}" && cd "$CURDIR"
+     if ! make -j "${JOBS}"; then
+         exit 1
+     fi
+     cd "$CURDIR"
+    
     if [ "${TEST}" == "True" ]; then
         test
         cd "$CURDIR"
