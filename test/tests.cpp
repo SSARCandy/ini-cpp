@@ -6,6 +6,22 @@
 
 using namespace inih;
 
+TEST(INIReader, get_sections) {
+    INIReader r{"./fixtures/config.ini"};
+
+    const std::set<std::string> ans = {"section1", "section2"};
+
+    EXPECT_EQ(r.Sections(), ans);
+}
+
+TEST(INIReader, get_keys) {
+    INIReader r{"./fixtures/config.ini"};
+
+    const std::set<std::string> ans = {"any", "any2", "not_int", "not_int_arr"};
+
+    EXPECT_EQ(r.Keys("section1"), ans);
+}
+
 TEST(INIReader, get_single_value) {
     INIReader r{"./fixtures/config.ini"};
 
@@ -68,12 +84,16 @@ TEST(INIReader, exception) {
 
     INIReader r{"./fixtures/config.ini"};
 
+    // section not found error
+    EXPECT_THROW(r.Get("section3"), std::runtime_error);
+
     // key not found error
     EXPECT_THROW(r.Get<int>("section1", "not_exist"), std::runtime_error);
     EXPECT_THROW(r.GetVector<int>("section1", "not_exist"), std::runtime_error);
 
     // parse error
     EXPECT_THROW(r.Get<int>("section1", "not_int"), std::runtime_error);
+    EXPECT_THROW(r.Get<bool>("section1", "not_int"), std::runtime_error);
     EXPECT_THROW(r.GetVector<int>("section1", "not_int_arr"), std::runtime_error);
 
 }
