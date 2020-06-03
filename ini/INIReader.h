@@ -247,7 +247,9 @@ public:
     int ParseError() const;
 
     // Return the list of sections found in ini file
-    const std::set<std::string>& Sections() const;
+    const std::set<std::string> Sections() const;
+
+    const std::unordered_map<std::string, std::string> Get(std::string section) const;
 
     template<typename T = std::string>
     T Get(std::string section, std::string name) const;
@@ -263,9 +265,7 @@ public:
 
 protected:
     int _error;
-    std::map<std::string, std::string> _values;
-    std::set<std::string> _sections;
-    static std::string MakeKey(std::string section, std::string name);
+    std::unordered_map<std::string, std::unordered_map<std::string, std::string>> _values;
     static int ValueHandler(void* user, const char* section, const char* name, const char* value);
 
     template<typename T>
@@ -310,20 +310,36 @@ inline int INIReader::ParseError() const
     return _error;
 }
 
-inline const std::set<std::string>& INIReader::Sections() const
+inline const std::set<std::string> INIReader::Sections() const
 {
-    return _sections;
+    std::set<std::string> retval;
+    for (auto const& element : _values) {
+        retval.insert(element.first);
+    }
+    return retval;
 }
 
-template<typename T = std::string>
-inline T INIReader::Get(std::string section, std::string name) const {
-    std::string key = MakeKey(section, name);
-    if (!_values.count(key)) {
-        throw std::runtime_error("key " + key + " not found.");
+inline const std::unordered_map<std::string, std::string> INIReader::Get(std::string section) const {
+    auto const _section = _values.find(section);
+    if (_section == _values.end()) {
+        throw std::runtime_error("section '" + section + "' not found.");
     }
-    
+    return _section->second;
+}
+
+template<typename T>
+inline T INIReader::Get(std::string section, std::string name) const {
+    auto const _section = Get(section);
+    auto const _value = _section.find(name);
+
+    if (_value == _section.end()) {
+        throw std::runtime_error("key '" + name + "' not found in section '" + section + "'.");
+    }
+
+    std::string value = _value->second;
+
     if constexpr (std::is_same<T, std::string>()) {
-        return _values.at(key);
+        return value;
     } else if constexpr (std::is_same<T, bool>()) {
         std::string s{_values.at(key)};
         std::transform(s.begin(), s.end(), s.begin(), ::tolower);
@@ -344,23 +360,20 @@ inline T INIReader::Get(std::string section, std::string name) const {
 
 template<typename T>
 inline T INIReader::Get(std::string section, std::string name, T&& default_v) const {
-    std::string key = MakeKey(section, name);
-    if (!_values.count(key)) {
+    try {
+        return Get<T>(section, name);
+    } catch(std::runtime_error &e) {
         return default_v;
     }
-    return Get<T>(section, name);    
 }
 
-template<typename T = std::string>
+template<typename T>
 inline std::vector<T> INIReader::GetVector(std::string section, std::string name) const {
-    std::string key = MakeKey(section, name);
-    if (!_values.count(key)) {
-        throw std::runtime_error("key " + key + " not found.");
-    }
+    std::string value = Get(section, name);
 
-    std::istringstream out{_values.at(key)};
+    std::istringstream out{value};
     const std::vector<std::string> strs{
-        std::istream_iterator<std::string>{out}, 
+        std::istream_iterator<std::string>{out},
         std::istream_iterator<std::string>()
     };
     try {
@@ -370,17 +383,17 @@ inline std::vector<T> INIReader::GetVector(std::string section, std::string name
         }
         return vs;
     } catch (std::exception& e) {
-        throw std::runtime_error("cannot parse value in " + key + " to vector<T>.");
+        throw std::runtime_error("cannot parse value " + value + " to vector<T>.");
     }
 }
 
 template<typename T>
 inline std::vector<T> INIReader::GetVector(std::string section, std::string name, std::vector<T> default_v) const {
-    std::string key = MakeKey(section, name);
-    if (!_values.count(key)) {
+    try {
+        return GetVector<T>(section, name);
+    } catch(std::runtime_error &e) {
         return default_v;
-    }
-    return GetVector<T>(section, name);    
+    };
 }
 
 
@@ -398,20 +411,14 @@ inline T INIReader::Converter(std::string s) const {
     return v;
 }
 
-inline std::string INIReader::MakeKey(const std::string section, const std::string name)
-{
-    std::string key = section + "=" + name;
-    return key;
 }
 
 inline int INIReader::ValueHandler(void* user, const char* section, const char* name, const char* value)
 {
     INIReader* reader = (INIReader*)user;
-    std::string key = MakeKey(section, name);
-    if (reader->_values[key].size() > 0)
-        reader->_values[key] += "\n";
-    reader->_values[key] += value;
-    reader->_sections.insert(section);
+    if (reader->_values[section][name].size() > 0)
+        reader->_values[section][name] += "\n";
+    reader->_values[section][name] += value;
     return 1;
 }
 }
