@@ -25,13 +25,8 @@ TEST(INIReader, get_vector) {
     const std::vector<int> ans1{1, 2, 3};
     const std::vector<std::string> ans2{"1", "2", "3"};
 
-    const auto& vec1 = r.GetVector<int>("section2", "any_vec");
-    const auto& vec2 = r.GetVector<>("section2", "any_vec");
-    
-    for (int i = 0; i < ans1.size(); ++i) {
-        EXPECT_EQ(vec1[i], ans1[i]);
-        EXPECT_EQ(vec2[i], ans2[i]);
-    }
+    ASSERT_EQ(r.GetVector<int>("section2", "any_vec"), ans1);
+    ASSERT_EQ(r.GetVector<>("section2", "any_vec"), ans2);
 }
 
 TEST(INIReader, get_single_value_with_default) {
@@ -58,18 +53,16 @@ TEST(INIReader, get_vector_with_default) {
     const auto& vec1 = r.GetVector<int>("section2", "not_exist", ans1);
     const auto& vec2 = r.GetVector<std::string>("section2", "not_exist", std::vector<std::string>{"1", "2", "3"});
     const auto& vec3 = r.GetVector<double>("section2", "doubles", std::vector<double>{0});
-    
-    for (int i = 0; i < ans1.size(); ++i) {
-        EXPECT_EQ(vec1[i], ans1[i]);
-        EXPECT_EQ(vec2[i], ans2[i]);
-        EXPECT_EQ(vec3[i], ans3[i]);
-    }
+
+    ASSERT_EQ(vec1, ans1);
+    ASSERT_EQ(vec2, ans2);
+    ASSERT_EQ(vec3, ans3);
 }
 
 
 TEST(INIReader, exception) {
 
-    
+
     EXPECT_THROW(INIReader{"QQ"}, std::runtime_error); // file not found
     EXPECT_THROW(INIReader{"./fixtures/bad_file.ini"}, std::runtime_error); // parse error
 
@@ -82,13 +75,13 @@ TEST(INIReader, exception) {
     // parse error
     EXPECT_THROW(r.Get<int>("section1", "not_int"), std::runtime_error);
     EXPECT_THROW(r.GetVector<int>("section1", "not_int_arr"), std::runtime_error);
-    
+
 }
 
 
 TEST(INIReader, read_big_file) {
     INIReader r{"./fixtures/bigfile.ini"};
-   
+
     for (int i = 1; i <= 1000; ++i) {
         const auto& v = r.Get<int>("section", "key" + std::to_string(i));
         EXPECT_EQ(v, i);
