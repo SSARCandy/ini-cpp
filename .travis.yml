@@ -6,7 +6,7 @@ sudo: true
 
 addons:
   apt:
-    packages: clang-format colordiff lcov
+    packages: clang-format colordiff lcov libboost-all-dev
 
 script:
   - ./build.sh -t

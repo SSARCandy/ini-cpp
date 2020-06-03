@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: apt
-      run: sudo apt-get install g++ cmake lcov
+      run: sudo apt-get install g++ cmake lcov libboost-all-dev
     - name: submodule
       run: git submodule update --init --recursive
     - name: test
