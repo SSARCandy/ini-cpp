@@ -15,8 +15,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: apt
-      run: sudo apt-get install g++ cmake lcov libboost-all-dev
+      run: sudo apt-get install g++ cmake lcov libboost-all-dev clang-format
     - name: submodule
       run: git submodule update --init --recursive
+    - name: lint
+      run: bash linter.sh
     - name: test
       run: ./build.sh -t
