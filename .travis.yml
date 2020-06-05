@@ -9,6 +9,7 @@ addons:
     packages: clang-format colordiff lcov libboost-all-dev
 
 script:
+  - ./linter.sh
   - ./build.sh -t
   - ./build.sh -c
 

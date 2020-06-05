@@ -18,5 +18,7 @@ jobs:
       run: sudo apt-get install g++ cmake lcov libboost-all-dev
     - name: submodule
       run: git submodule update --init --recursive
+    - name: lint
+      run: bash linter.sh
     - name: test
       run: ./build.sh -t
