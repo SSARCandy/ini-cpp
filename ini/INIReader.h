@@ -279,16 +279,13 @@ inline int INIReader::ParseError() const {
             break;
         case -1:
             throw std::runtime_error("ini file not found.");
-            break;
         case -2:
             throw std::runtime_error("memory alloc error");
-            break;
         default:
             throw std::runtime_error("parse error on line no: " +
                                      std::to_string(_error));
-            break;
     }
-    return _error;
+    return 0;
 }
 
 inline const std::set<std::string> INIReader::Sections() const {
