@@ -11,7 +11,7 @@ namespace bc = boost::core;
 int main() {
     INIReader r{"./test/fixtures/config.ini"};
 
-    const auto& v1 = r.Get<std::string>("section1", "any"); 
+    const auto& v1 = r.Get<std::string>("section1", "any");
     const auto& v2 = r.Get<int>("section1", "any");
     const auto& v3 = r.Get<double>("section1", "any");
     const auto& v4 = r.GetVector<float>("section2", "any_vec");
