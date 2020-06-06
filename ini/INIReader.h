@@ -279,16 +279,13 @@ inline int INIReader::ParseError() const {
             break;
         case -1:
             throw std::runtime_error("ini file not found.");
-            break;
         case -2:
             throw std::runtime_error("memory alloc error");
-            break;
         default:
             throw std::runtime_error("parse error on line no: " +
                                      std::to_string(_error));
-            break;
     }
-    return _error;
+    return 0;
 }
 
 inline const std::set<std::string> INIReader::Sections() const {
@@ -408,9 +405,11 @@ inline const bool INIReader::BoolConverter(std::string s) const {
 inline int INIReader::ValueHandler(void* user, const char* section,
                                    const char* name, const char* value) {
     INIReader* reader = (INIReader*)user;
-    if (reader->_values[section][name].size() > 0)
-        reader->_values[section][name] += "\n";
-    reader->_values[section][name] += value;
+    if (reader->_values[section][name].size() > 0) {
+        throw std::runtime_error("duplicate key '" + std::string(name) +
+                                 "' in section '" + section + "'.");
+    }
+    reader->_values[section][name] = value;
     return 1;
 }
 }

@@ -108,3 +108,8 @@ TEST(INIReader, read_big_file) {
         EXPECT_EQ(v, i);
     }
 }
+
+TEST(INIReader, dulicate_keys) {
+    EXPECT_THROW(INIReader{"./fixtures/duplicate_keys.ini"},
+                 std::runtime_error);
+}
