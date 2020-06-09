@@ -232,17 +232,20 @@ class INIReader {
         std::string section) const;
 
     template <typename T = std::string>
-    T Get(std::string section, std::string name) const;
+    T Get(const std::string& section, const std::string& name) const;
 
     template <typename T>
-    T Get(std::string section, std::string name, T&& default_v) const;
+    T Get(const std::string& section, const std::string& name,
+          T&& default_v) const;
 
     template <typename T = std::string>
-    std::vector<T> GetVector(std::string section, std::string name) const;
+    std::vector<T> GetVector(const std::string& section,
+                             const std::string& name) const;
 
     template <typename T>
-    std::vector<T> GetVector(std::string section, std::string name,
-                             std::vector<T> default_v) const;
+    std::vector<T> GetVector(const std::string& section,
+                             const std::string& name,
+                             const std::vector<T>& default_v) const;
 
    protected:
     int _error;
@@ -253,7 +256,7 @@ class INIReader {
                             const char* value);
 
     template <typename T>
-    T Converter(std::string s) const;
+    T Converter(const std::string& s) const;
 
     const bool BoolConverter(std::string s) const;
 };
@@ -315,7 +318,8 @@ inline const std::unordered_map<std::string, std::string> INIReader::Get(
 }
 
 template <typename T>
-inline T INIReader::Get(std::string section, std::string name) const {
+inline T INIReader::Get(const std::string& section,
+                        const std::string& name) const {
     auto const _section = Get(section);
     auto const _value = _section.find(name);
 
@@ -336,7 +340,7 @@ inline T INIReader::Get(std::string section, std::string name) const {
 }
 
 template <typename T>
-inline T INIReader::Get(std::string section, std::string name,
+inline T INIReader::Get(const std::string& section, const std::string& name,
                         T&& default_v) const {
     try {
         return Get<T>(section, name);
@@ -346,8 +350,8 @@ inline T INIReader::Get(std::string section, std::string name,
 }
 
 template <typename T>
-inline std::vector<T> INIReader::GetVector(std::string section,
-                                           std::string name) const {
+inline std::vector<T> INIReader::GetVector(const std::string& section,
+                                           const std::string& name) const {
     std::string value = Get(section, name);
 
     std::istringstream out{value};
@@ -355,7 +359,7 @@ inline std::vector<T> INIReader::GetVector(std::string section,
                                         std::istream_iterator<std::string>()};
     try {
         std::vector<T> vs{};
-        for (std::string s : strs) {
+        for (const std::string& s : strs) {
             vs.emplace_back(Converter<T>(s));
         }
         return vs;
@@ -366,9 +370,9 @@ inline std::vector<T> INIReader::GetVector(std::string section,
 }
 
 template <typename T>
-inline std::vector<T> INIReader::GetVector(std::string section,
-                                           std::string name,
-                                           std::vector<T> default_v) const {
+inline std::vector<T> INIReader::GetVector(
+    const std::string& section, const std::string& name,
+    const std::vector<T>& default_v) const {
     try {
         return GetVector<T>(section, name);
     } catch (std::runtime_error& e) {
@@ -377,7 +381,7 @@ inline std::vector<T> INIReader::GetVector(std::string section,
 }
 
 template <typename T>
-inline T INIReader::Converter(std::string s) const {
+inline T INIReader::Converter(const std::string& s) const {
     try {
         T v{};
         std::istringstream _{s};
@@ -391,7 +395,7 @@ inline T INIReader::Converter(std::string s) const {
 
 inline const bool INIReader::BoolConverter(std::string s) const {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-    const std::unordered_map<std::string, bool> s2b{
+    static const std::unordered_map<std::string, bool> s2b{
         {"1", true},  {"true", true},   {"yes", true}, {"on", true},
         {"0", false}, {"false", false}, {"no", false}, {"off", false},
     };
