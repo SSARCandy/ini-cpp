@@ -9,22 +9,6 @@ Yet another `.ini` parser for modern c++ (made for cpp17), inspired and extend f
 
 ## Example
 
-```cpp
-#include "ini/INIReader.h"
-
-int main() {
-    inih::INIReader r{"./test/fixtures/config.ini"};
-
-    const auto& v1 = r.Get<std::string>("section1", "any"); // "5"
-    const auto& v2 = r.Get<int>("section1", "any"); // 5
-    const auto& v3 = r.Get<double>("section1", "any"); // 5.0
-    const auto& v4 = r.GetVector<float>("section2", "any_vec"); // [1.0, 2.0, 3.0]
-    const auto& v5 = r.GetVector<std::string>("section2", "any_vec"); // ["1", "2", "3"]
-
-    return 0;
-}
-```
-
 The `config.ini`'s content is something looks like:
 
 ```
@@ -35,8 +19,29 @@ any=5
 any_vec = 1 2 3
 ```
 
+```cpp
+#include "ini/ini.h"
+
+int main() {
+    inih::INIReader r{"./test/fixtures/config.ini"};
+
+    // Get and parse the ini value
+    const auto& v1 = r.Get<std::string>("section1", "any"); // "5"
+    const auto& v2 = r.Get<int>("section1", "any"); // 5
+    const auto& v3 = r.Get<double>("section1", "any"); // 5.0
+    const auto& v4 = r.GetVector<float>("section2", "any_vec"); // [1.0, 2.0, 3.0]
+    const auto& v5 = r.GetVector<std::string>("section2", "any_vec"); // ["1", "2", "3"]
+
+    // And also support writing to new ini file.
+    r.InsertEntry("new_section", "key1", 5); // section and key not exist
+    inih::INIWriter::write("output.ini", r); // Dump ini to file
+
+    return 0;
+}
+```
+
 To learn more, please refer to [test folder](https://github.com/SSARCandy/ini-cpp/tree/master/test), it covered ALL utilities.
 
 ## Install
 
-Simply copy the header file `ini/INIReader.h` to your project, then done. 
+Simply copy the header file `ini/ini.h` to your project, then done. 

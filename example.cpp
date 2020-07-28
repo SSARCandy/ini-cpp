@@ -3,7 +3,7 @@
 #include <typeinfo>
 #include <boost/core/demangle.hpp>
 
-#include "ini/INIReader.h"
+#include "ini/ini.h"
 using namespace inih;
 
 namespace bc = boost::core;
@@ -30,6 +30,15 @@ int main() {
     std::cout << "v3 = " << v3 << ", which is type: " << bc::demangle(typeid(v3).name()) << std::endl;
     std::cout << "v4 = "; for (auto& v : v4) std::cout << v << " "; std::cout << ", which is type: " << bc::demangle(typeid(v4).name()) << std::endl;
     std::cout << "v5 = "; for (auto& v : v5) std::cout << v << " "; std::cout << ", which is type: " << bc::demangle(typeid(v5).name()) << std::endl;
+
+    // section exist, key not exist
+    r.InsertEntry("section1", "my_custom_key", "hello world");
+
+    // section&key not exist
+    r.InsertEntry("new_section", "key1", 5);
+
+    // Dump ini to file
+    INIWriter::write("output.ini", r);
 
     return 0;
 }
