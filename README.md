@@ -33,7 +33,7 @@ int main() {
     const auto& v5 = r.GetVector<std::string>("section2", "any_vec"); // ["1", "2", "3"]
 
     // And also support writing to new ini file.
-    r.InsertEntry("new_section", "key1", 5); // section and key not exist
+    r.InsertEntry("new_section", "key1", 5); // Create new entry
     inih::INIWriter::write("output.ini", r); // Dump ini to file
 
     return 0;
