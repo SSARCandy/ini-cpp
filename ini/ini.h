@@ -1,17 +1,7 @@
-// Read an INI file into easy-to-access name/value pairs.
-
-// inih and INIReader are released under the New BSD license (see LICENSE.txt).
-// Go to the project home page for more info:
-//
-// https://github.com/benhoyt/inih
-/* inih -- simple .INI file parser
-
-inih is released under the New BSD license (see LICENSE.txt). Go to the project
-home page for more info:
-
-https://github.com/benhoyt/inih
-
-*/
+/**
+ * Yet another .ini parser for modern c++ (made for cpp17), inspired and extend
+ * from @benhoyt's inih. See project page: https://github.com/SSARCandy/ini-cpp
+ */
 
 #ifndef __INI_H__
 #define __INI_H__
@@ -20,9 +10,11 @@ https://github.com/benhoyt/inih
 #include <stdio.h>
 #include <string.h>
 
+#include <sys/stat.h>
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <iterator>
 #include <map>
@@ -247,6 +239,22 @@ class INIReader {
                              const std::string& name,
                              const std::vector<T>& default_v) const;
 
+    template <typename T = std::string>
+    void InsertEntry(const std::string& section, const std::string& name,
+                     const T& v);
+
+    template <typename T = std::string>
+    void InsertEntry(const std::string& section, const std::string& name,
+                     const std::vector<T>& vs);
+
+    template <typename T = std::string>
+    void UpdateEntry(const std::string& section, const std::string& name,
+                     const T& v);
+
+    template <typename T = std::string>
+    void UpdateEntry(const std::string& section, const std::string& name,
+                     const std::vector<T>& vs);
+
    protected:
     int _error;
     std::unordered_map<std::string,
@@ -259,6 +267,12 @@ class INIReader {
     T Converter(const std::string& s) const;
 
     const bool BoolConverter(std::string s) const;
+
+    template <typename T>
+    std::string V2String(const T& v) const;
+
+    template <typename T>
+    std::string Vec2String(const std::vector<T>& v) const;
 };
 
 #endif  // __INIREADER_H__
@@ -381,6 +395,67 @@ inline std::vector<T> INIReader::GetVector(
 }
 
 template <typename T>
+inline void INIReader::InsertEntry(const std::string& section,
+                                   const std::string& name, const T& v) {
+    if (_values[section][name].size() > 0) {
+        throw std::runtime_error("duplicate key '" + std::string(name) +
+                                 "' in section '" + section + "'.");
+    }
+    _values[section][name] = V2String(v);
+}
+
+template <typename T>
+inline void INIReader::InsertEntry(const std::string& section,
+                                   const std::string& name,
+                                   const std::vector<T>& vs) {
+    if (_values[section][name].size() > 0) {
+        throw std::runtime_error("duplicate key '" + std::string(name) +
+                                 "' in section '" + section + "'.");
+    }
+    _values[section][name] = Vec2String(vs);
+}
+
+template <typename T>
+inline void INIReader::UpdateEntry(const std::string& section,
+                                   const std::string& name, const T& v) {
+    if (!_values[section][name].size()) {
+        throw std::runtime_error("key '" + std::string(name) +
+                                 "' not exist in section '" + section + "'.");
+    }
+    _values[section][name] = V2String(v);
+}
+
+template <typename T>
+inline void INIReader::UpdateEntry(const std::string& section,
+                                   const std::string& name,
+                                   const std::vector<T>& vs) {
+    if (!_values[section][name].size()) {
+        throw std::runtime_error("key '" + std::string(name) +
+                                 "' not exist in section '" + section + "'.");
+    }
+    _values[section][name] = Vec2String(vs);
+}
+
+template <typename T>
+inline std::string INIReader::V2String(const T& v) const {
+    std::stringstream ss;
+    ss << v;
+    return ss.str();
+}
+
+template <typename T>
+inline std::string INIReader::Vec2String(const std::vector<T>& v) const {
+    if (v.empty()) {
+        return "";
+    }
+    std::ostringstream oss;
+    std::copy(v.begin(), v.end() - 1, std::ostream_iterator<T>(oss, " "));
+    oss << v.back();
+
+    return oss.str();
+}
+
+template <typename T>
 inline T INIReader::Converter(const std::string& s) const {
     try {
         T v{};
@@ -416,5 +491,32 @@ inline int INIReader::ValueHandler(void* user, const char* section,
     reader->_values[section][name] = value;
     return 1;
 }
-}
 #endif  // __INIREADER__
+
+#ifndef __INIWRITER_H__
+#define __INIWRITER_H__
+
+class INIWriter {
+   public:
+    INIWriter(){};
+    inline static void write(const std::string& filepath,
+                             const INIReader& reader) {
+        if (struct stat buf; stat(filepath.c_str(), &buf) == 0) {
+            throw std::runtime_error("file: " + filepath + " already exist.");
+        }
+        std::ofstream out;
+        out.open(filepath);
+        if (!out.is_open()) {
+            throw std::runtime_error("cannot open output file: " + filepath);
+        }
+        for (const auto& section : reader.Sections()) {
+            out << "[" << section << "]\n";
+            for (const auto& key : reader.Keys(section)) {
+                out << key << "=" << reader.Get(section, key) << "\n";
+            }
+        }
+        out.close();
+    }
+};
+}
+#endif /* __INIWRITER_H__ */
