@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "ini/INIReader.h"
+#include "ini/ini.h"
 
 using namespace inih;
 
@@ -111,5 +111,56 @@ TEST(INIReader, read_big_file) {
 
 TEST(INIReader, dulicate_keys) {
     EXPECT_THROW(INIReader{"./fixtures/duplicate_keys.ini"},
+                 std::runtime_error);
+}
+
+TEST(INIReader, InsertEntry) {
+    INIReader r{"./fixtures/config.ini"};
+
+    // section exist, key not exist
+    r.InsertEntry("section1", "my_custom_key", "hello world");
+
+    // section&key not exist
+    r.InsertEntry("new_section", "key1", 5);
+
+    EXPECT_EQ("hello world", r.Get("section1", "my_custom_key"));
+    EXPECT_EQ(5, r.Get<int>("new_section", "key1"));
+}
+
+TEST(INIReader, UpdateEntry) {
+    INIReader r{"./fixtures/config.ini"};
+    r.InsertEntry("section1", "my_custom_key", "hello world");
+
+    r.UpdateEntry("section1", "my_custom_key", 123);
+    EXPECT_EQ(123, r.Get<int>("section1", "my_custom_key"));
+
+    std::vector<double> ans1{0.1, 0.2, 0.3};
+    r.UpdateEntry("section1", "my_custom_key", ans1);
+    for (size_t i = 0; i < ans1.size(); ++i) {
+        EXPECT_EQ(ans1[i], r.GetVector<double>("section1", "my_custom_key")[i]);
+    }
+}
+
+TEST(INIWriter, write) {
+    INIReader r{"./fixtures/config.ini"};
+    r.InsertEntry("new_section", "key1", "123");
+    r.InsertEntry("new_section", "key2", 5.5);
+    r.InsertEntry("new_section", "key3", std::vector<double>{0.1, 0.2, 0.3});
+    r.InsertEntry("new_section", "key4", std::vector<std::string>{"a", "b"});
+
+    system("rm -rf ./fixtures/output.ini");
+    INIWriter::write("./fixtures/output.ini", r);
+
+    INIReader r2{"./fixtures/output.ini"};
+    for (const auto& section : r.Sections()) {
+        for (const auto& key : r.Keys(section)) {
+            EXPECT_EQ(r.Get(section, key), r2.Get(section, key));
+        }
+    }
+}
+
+TEST(INIWriter, exception) {
+    INIReader r{"./fixtures/config.ini"};
+    EXPECT_THROW(INIWriter::write("./fixtures/config.ini", r),
                  std::runtime_error);
 }
