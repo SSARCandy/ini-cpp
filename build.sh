@@ -16,8 +16,7 @@ elif which sysctl; then
 else
     CORES=2
 fi
-JOBS=$(( CORES / 2 ))
-
+JOBS=$(( (CORES + 1) / 2 ))
 usage() {
 
 cat <<EOF
