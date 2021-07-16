@@ -308,8 +308,8 @@ inline int INIReader::ParseError() const {
 /**
  * @brief Return the list of sections found in ini file
  * @return The list of sections found in ini file
- * 
- * 
+ *
+ *
  */
 inline const std::set<std::string> INIReader::Sections() const {
     std::set<std::string> retval;
@@ -371,11 +371,13 @@ inline T INIReader::Get(const std::string& section,
 }
 
 /**
- * @brief Return the value of the given key in the given section, return default if not found
+ * @brief Return the value of the given key in the given section, return default
+ * if not found
  * @param section The section name
  * @param name The key name
  * @param default_v The default value
- * @return The value of the given key in the given section, return default if not found
+ * @return The value of the given key in the given section, return default if
+ * not found
  */
 template <typename T>
 inline T INIReader::Get(const std::string& section, const std::string& name,
@@ -392,7 +394,7 @@ inline T INIReader::Get(const std::string& section, const std::string& name,
  * @param section The section name
  * @param name The key name
  * @return The value array of the given key in the given section.
- * 
+ *
  * For example:
  * ```ini
  * [section]
@@ -402,7 +404,7 @@ inline T INIReader::Get(const std::string& section, const std::string& name,
  * const auto vs = ini.GetVector<std::vector<int>>("section", "key");
  * // vs = {1, 2, 3, 4}
  * ```
- */ 
+ */
 template <typename T>
 inline std::vector<T> INIReader::GetVector(const std::string& section,
                                            const std::string& name) const {
@@ -424,12 +426,14 @@ inline std::vector<T> INIReader::GetVector(const std::string& section,
 }
 
 /**
- * @brief Return the value array of the given key in the given section, return default if not found
+ * @brief Return the value array of the given key in the given section, return
+ * default if not found
  * @param section The section name
  * @param name The key name
  * @param default_v The default value
- * @return The value array of the given key in the given section, return default if not found
- * 
+ * @return The value array of the given key in the given section, return default
+ * if not found
+ *
  * @see INIReader::GetVector
  */
 template <typename T>
