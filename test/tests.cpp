@@ -65,12 +65,12 @@ TEST(INIReader, get_vector_with_default) {
     INIReader r{"./fixtures/config.ini"};
 
     const std::vector<int> ans1{1, 2, 3};
-    const std::vector<std::string> ans2{"1", "2", "3"};
+    const std::vector<std::string> ans2{"1", "2", "3", "4"};
     const std::vector<double> ans3{1.23, 4.56};
 
     const auto& vec1 = r.GetVector<int>("section2", "not_exist", ans1);
     const auto& vec2 = r.GetVector<std::string>(
-        "section2", "not_exist", std::vector<std::string>{"1", "2", "3"});
+        "section2", "not_exist", std::vector<std::string>{"1", "2", "3", "4"});
     const auto& vec3 =
         r.GetVector<double>("section2", "doubles", std::vector<double>{0});
 
