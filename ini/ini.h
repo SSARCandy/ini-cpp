@@ -280,11 +280,21 @@ class INIReader {
 #ifndef __INIREADER__
 #define __INIREADER__
 
+/**
+ * @brief Construct an INIReader object from a file name
+ * @param filename The name of the INI file to parse
+ * @throws std::runtime_error if there is an error parsing the INI file
+ */
 inline INIReader::INIReader(std::string filename) {
     _error = ini_parse(filename.c_str(), ValueHandler, this);
     ParseError();
 }
 
+/**
+ * @brief Construct an INIReader object from a file pointer
+ * @param file A pointer to the INI file to parse
+ * @throws std::runtime_error if there is an error parsing the INI file
+ */
 inline INIReader::INIReader(FILE* file) {
     _error = ini_parse_file(file, ValueHandler, this);
     ParseError();
@@ -308,8 +318,6 @@ inline int INIReader::ParseError() const {
 /**
  * @brief Return the list of sections found in ini file
  * @return The list of sections found in ini file
- *
- *
  */
 inline const std::set<std::string> INIReader::Sections() const {
     std::set<std::string> retval;
@@ -333,6 +341,12 @@ inline const std::set<std::string> INIReader::Keys(std::string section) const {
     return retval;
 }
 
+/**
+ * @brief Get the map representing the values in a section of the INI file
+ * @param section The name of the section to retrieve
+ * @return The map representing the values in the given section
+ * @throws std::runtime_error if the section is not found
+ */
 inline const std::unordered_map<std::string, std::string> INIReader::Get(
     std::string section) const {
     auto const _section = _values.find(section);
@@ -447,6 +461,13 @@ inline std::vector<T> INIReader::GetVector(
     };
 }
 
+/**
+ * @brief Insert a key-value pair into the INI file
+ * @param section The section name
+ * @param name The key name
+ * @param v The value to insert
+ * @throws std::runtime_error if the key already exists in the section
+ */
 template <typename T>
 inline void INIReader::InsertEntry(const std::string& section,
                                    const std::string& name, const T& v) {
@@ -457,6 +478,13 @@ inline void INIReader::InsertEntry(const std::string& section,
     _values[section][name] = V2String(v);
 }
 
+/**
+ * @brief Insert a vector of values into the INI file
+ * @param section The section name
+ * @param name The key name
+ * @param vs The vector of values to insert
+ * @throws std::runtime_error if the key already exists in the section
+ */
 template <typename T>
 inline void INIReader::InsertEntry(const std::string& section,
                                    const std::string& name,
@@ -468,6 +496,13 @@ inline void INIReader::InsertEntry(const std::string& section,
     _values[section][name] = Vec2String(vs);
 }
 
+/**
+ * @brief Update a key-value pair in the INI file
+ * @param section The section name
+ * @param name The key name
+ * @param v The new value to set
+ * @throws std::runtime_error if the key does not exist in the section
+ */
 template <typename T>
 inline void INIReader::UpdateEntry(const std::string& section,
                                    const std::string& name, const T& v) {
@@ -478,6 +513,13 @@ inline void INIReader::UpdateEntry(const std::string& section,
     _values[section][name] = V2String(v);
 }
 
+/**
+ * @brief Update a vector of values in the INI file
+ * @param section The section name
+ * @param name The key name
+ * @param vs The new vector of values to set
+ * @throws std::runtime_error if the key does not exist in the section
+ */
 template <typename T>
 inline void INIReader::UpdateEntry(const std::string& section,
                                    const std::string& name,
@@ -552,6 +594,13 @@ inline int INIReader::ValueHandler(void* user, const char* section,
 class INIWriter {
    public:
     INIWriter(){};
+    /**
+     * @brief Write the contents of an INI file to a new file
+     * @param filepath The path of the output file
+     * @param reader The INIReader object to write to the file
+     * @throws std::runtime_error if the output file already exists or cannot be
+     * opened
+     */
     inline static void write(const std::string& filepath,
                              const INIReader& reader) {
         if (struct stat buf; stat(filepath.c_str(), &buf) == 0) {
