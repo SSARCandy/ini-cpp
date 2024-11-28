@@ -433,7 +433,7 @@ inline std::vector<T> INIReader::GetVector(const std::string& section,
             vs.emplace_back(Converter<T>(s));
         }
         return vs;
-    } catch (std::exception& e) {
+    } catch (std::exception&) {
         throw std::runtime_error("cannot parse value " + value +
                                  " to vector<T>.");
     }
@@ -558,7 +558,7 @@ inline T INIReader::Converter(const std::string& s) const {
         _.exceptions(std::ios::failbit);
         _ >> v;
         return v;
-    } catch (std::exception& e) {
+    } catch (std::exception&) {
         throw std::runtime_error("cannot parse value '" + s + "' to type<T>.");
     };
 }
