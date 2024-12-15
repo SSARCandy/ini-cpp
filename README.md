@@ -1,6 +1,6 @@
 # C++ INI Parser
 
-[![C/C++ CI](https://github.com/SSARCandy/ini-cpp/workflows/C/C++%20CI/badge.svg?branch=master)](https://github.com/SSARCandy/ini-cpp/actions)
+[![C/C++ CI](https://github.com/SSARCandy/ini-cpp/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/SSARCandy/ini-cpp/actions/workflows/c-cpp.yml)
 [![codecov](https://codecov.io/gh/SSARCandy/ini-cpp/branch/master/graph/badge.svg)](https://codecov.io/gh/SSARCandy/ini-cpp)
   
 Yet another `.ini` parser for modern c++ (made for cpp17), inspired and extend from [inih](https://github.com/benhoyt/inih).
