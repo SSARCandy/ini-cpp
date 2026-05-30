@@ -1,5 +1,5 @@
 /**
- * Yet another .ini parser for modern c++ (made for cpp17), inspired and extend
+ * Yet another .ini parser for modern c++ (made for cpp17), inspired and extended
  * from @benhoyt's inih. See project page: https://github.com/SSARCandy/ini-cpp
  */
 
