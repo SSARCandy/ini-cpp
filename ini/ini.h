@@ -200,7 +200,7 @@ inline int ini_parse(const char* filename, ini_handler handler, void* user) {
 class INIReader {
    public:
     // Empty Constructor
-    INIReader() {};
+    INIReader() = default;
 
     // Construct INIReader and parse given filename. See ini.h for more info
     // about the parsing.
@@ -593,7 +593,7 @@ inline int INIReader::ValueHandler(void* user, const char* section,
 
 class INIWriter {
    public:
-    INIWriter() {};
+    INIWriter() = default;
     /**
      * @brief Write the contents of an INI file to a new file
      * @param filepath The path of the output file
