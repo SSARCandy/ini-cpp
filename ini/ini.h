@@ -598,13 +598,18 @@ class INIWriter {
      * @brief Write the contents of an INI file to a new file
      * @param filepath The path of the output file
      * @param reader The INIReader object to write to the file
+     * @param overwrite Whether to just overwrite an existing file
      * @throws std::runtime_error if the output file already exists or cannot be
      * opened
      */
-    inline static void write(const std::string& filepath,
-                             const INIReader& reader) {
-        if (struct stat buf; stat(filepath.c_str(), &buf) == 0) {
-            throw std::runtime_error("file: " + filepath + " already exist.");
+    inline static void write(const std::string& filepath, const INIReader& reader,
+                             const bool& overwrite = false) {
+        if (overwrite) {
+            std::remove(filepath.c_str());
+        } else {
+            if (struct stat buf; stat(filepath.c_str(), &buf) == 0) {
+                throw std::runtime_error("file: " + filepath + " already exists.");
+            }
         }
         std::ofstream out;
         out.open(filepath);
