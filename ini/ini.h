@@ -200,7 +200,7 @@ inline int ini_parse(const char* filename, ini_handler handler, void* user) {
 class INIReader {
    public:
     // Empty Constructor
-    INIReader(){};
+    INIReader() {};
 
     // Construct INIReader and parse given filename. See ini.h for more info
     // about the parsing.
@@ -593,7 +593,7 @@ inline int INIReader::ValueHandler(void* user, const char* section,
 
 class INIWriter {
    public:
-    INIWriter(){};
+    INIWriter() {};
     /**
      * @brief Write the contents of an INI file to a new file
      * @param filepath The path of the output file
@@ -602,13 +602,15 @@ class INIWriter {
      * @throws std::runtime_error if the output file already exists or cannot be
      * opened
      */
-    inline static void write(const std::string& filepath, const INIReader& reader,
+    inline static void write(const std::string& filepath,
+                             const INIReader& reader,
                              const bool& overwrite = false) {
         if (overwrite) {
             std::remove(filepath.c_str());
         } else {
             if (struct stat buf; stat(filepath.c_str(), &buf) == 0) {
-                throw std::runtime_error("file: " + filepath + " already exists.");
+                throw std::runtime_error("file: " + filepath +
+                                         " already exists.");
             }
         }
         std::ofstream out;
