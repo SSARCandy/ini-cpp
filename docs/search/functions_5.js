@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['write_21',['write',['../classinih_1_1INIWriter.html#a891a351825c24f14e36e61c0c21c4606',1,'inih::INIWriter']]]
+  ['parseerror_0',['ParseError',['../classinih_1_1INIReader.html#a5db3eee53f45dec459a091fa6e5992f2',1,'inih::INIReader']]]
 ];
