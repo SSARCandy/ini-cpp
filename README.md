@@ -71,4 +71,21 @@ All APIs live in namespace `inih`. All errors are reported by throwing `std::run
 
 ## Install
 
-Simply copy the header file `ini/ini.h` to your project, then done. 
+### Manual
+
+Simply copy the header file `ini/ini.h` to your project, then done.
+
+### vcpkg
+
+ini-cpp is in the [vcpkg registry](https://github.com/microsoft/vcpkg/tree/master/ports/ini-cpp):
+
+```bash
+vcpkg install ini-cpp
+```
+
+It is header-only, so consume it from CMake via `find_path`:
+
+```cmake
+find_path(INI_CPP_INCLUDE_DIRS "ini/ini.h")
+target_include_directories(main PRIVATE ${INI_CPP_INCLUDE_DIRS})
+```
