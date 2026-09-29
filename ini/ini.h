@@ -156,6 +156,19 @@ class INIReader {
     }
 
     /**
+     * @brief Construct an INIReader object from in-memory ini content
+     * @param content The ini text to parse (e.g. a string literal embedded in
+     * a unit test); it is not interpreted as a file name
+     * @throws std::runtime_error if there is an error parsing the content
+     */
+    static INIReader FromString(std::string_view content) {
+        INIReader r;
+        r.Parse(content);
+        r.ParseError();
+        return r;
+    }
+
+    /**
      * @brief Return the result of the parse, i.e., 0 on success
      * @throws std::runtime_error on file open or parse error
      */

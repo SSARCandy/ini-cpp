@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['parseerror_0',['ParseError',['../classinih_1_1INIReader.html#a5db3eee53f45dec459a091fa6e5992f2',1,'inih::INIReader']]]
+  ['keys_0',['Keys',['../classinih_1_1INIReader.html#ace516202b49bf78ddfed9553567ce9e5',1,'inih::INIReader']]]
 ];

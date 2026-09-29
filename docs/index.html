@@ -116,8 +116,12 @@ $(function(){ initResizable(false); });
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclassinih_1_1INIReader_html"><div class="ttname"><a href="classinih_1_1INIReader.html">inih::INIReader</a></div><div class="ttdoc">Read an INI file into easy-to-access name/value pairs.</div><div class="ttdef"><b>Definition</b> ini.h:113</div></div>
-<div class="ttc" id="aclassinih_1_1INIReader_html_a682e4399dd5802110f8b9375f6551e4a"><div class="ttname"><a href="classinih_1_1INIReader.html#a682e4399dd5802110f8b9375f6551e4a">inih::INIReader::Get</a></div><div class="ttdeci">std::unordered_map&lt; std::string, std::string &gt; Get(const std::string &amp;section) const</div><div class="ttdoc">Get the map representing the values in a section of the INI file.</div><div class="ttdef"><b>Definition</b> ini.h:209</div></div>
-<div class="ttc" id="aclassinih_1_1INIWriter_html_a6aa5666307a2faa16fb2cf3352699d85"><div class="ttname"><a href="classinih_1_1INIWriter.html#a6aa5666307a2faa16fb2cf3352699d85">inih::INIWriter::write</a></div><div class="ttdeci">static void write(const std::string &amp;filepath, const INIReader &amp;reader, const bool overwrite=false)</div><div class="ttdoc">Write the contents of an INI file to a new file.</div><div class="ttdef"><b>Definition</b> ini.h:544</div></div>
+<div class="ttc" id="aclassinih_1_1INIReader_html_a682e4399dd5802110f8b9375f6551e4a"><div class="ttname"><a href="classinih_1_1INIReader.html#a682e4399dd5802110f8b9375f6551e4a">inih::INIReader::Get</a></div><div class="ttdeci">std::unordered_map&lt; std::string, std::string &gt; Get(const std::string &amp;section) const</div><div class="ttdoc">Get the map representing the values in a section of the INI file.</div><div class="ttdef"><b>Definition</b> ini.h:222</div></div>
+<div class="ttc" id="aclassinih_1_1INIWriter_html_a6aa5666307a2faa16fb2cf3352699d85"><div class="ttname"><a href="classinih_1_1INIWriter.html#a6aa5666307a2faa16fb2cf3352699d85">inih::INIWriter::write</a></div><div class="ttdeci">static void write(const std::string &amp;filepath, const INIReader &amp;reader, const bool overwrite=false)</div><div class="ttdoc">Write the contents of an INI file to a new file.</div><div class="ttdef"><b>Definition</b> ini.h:557</div></div>
+</div><!-- fragment --><p>Ini content that is already in memory (a <code>std::string</code>, <code>std::string_view</code> or string literal, handy in unit tests) can be parsed without touching the file system:</p>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keyword">auto</span> r = <a class="code hl_function" href="classinih_1_1INIReader.html#aab2fd355a2c449b7c7134e9f170bdb55">inih::INIReader::FromString</a>(<span class="stringliteral">&quot;[section1]\nany = 5\n&quot;</span>);</div>
+<div class="line"><span class="keyword">const</span> <span class="keyword">auto</span> v = r.Get&lt;<span class="keywordtype">int</span>&gt;(<span class="stringliteral">&quot;section1&quot;</span>, <span class="stringliteral">&quot;any&quot;</span>); <span class="comment">// 5</span></div>
+<div class="ttc" id="aclassinih_1_1INIReader_html_aab2fd355a2c449b7c7134e9f170bdb55"><div class="ttname"><a href="classinih_1_1INIReader.html#aab2fd355a2c449b7c7134e9f170bdb55">inih::INIReader::FromString</a></div><div class="ttdeci">static INIReader FromString(std::string_view content)</div><div class="ttdoc">Construct an INIReader object from in-memory ini content.</div><div class="ttdef"><b>Definition</b> ini.h:164</div></div>
 </div><!-- fragment --><p>To learn more, please refer to <a href="https://github.com/SSARCandy/ini-cpp/tree/master/test">test folder</a>, it covered ALL utilities.</p>
 <h1>API</h1>
 <p>All APIs live in namespace <code>inih</code>. All errors are reported by throwing <code>std::runtime_error</code>.</p>
@@ -130,22 +134,24 @@ $(function(){ initResizable(false); });
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>INIReader(FILE* file)</code>   </td><td class="markdownTableBodyNone">Same, but reads from an already-opened <code>FILE*</code> (the caller keeps ownership)    </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>INIReader::FromString(std::string_view content)</code>   </td><td class="markdownTableBodyNone">Same, but parses ini text held in memory (a <code>std::string</code>, <code>std::string_view</code> or string literal) instead of a file    </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>Sections()</code>   </td><td class="markdownTableBodyNone">All section names, as <code>std::set&lt;std::string&gt;</code>    </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Keys(section)</code>   </td><td class="markdownTableBodyNone">All key names in the given section, as <code>std::set&lt;std::string&gt;</code>    </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>Get(section)</code>   </td><td class="markdownTableBodyNone">The whole section, as <code>std::unordered_map&lt;std::string, std::string&gt;</code>    </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Get&lt;T = std::string&gt;(section, name)</code>   </td><td class="markdownTableBodyNone">The value parsed as <code>T</code>; throws if section/key is missing or the value cannot be parsed    </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>Get&lt;T&gt;(section, name, default_value)</code>   </td><td class="markdownTableBodyNone">Same, but returns <code>default_value</code> instead of throwing    </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>GetVector&lt;T = std::string&gt;(section, name)</code>   </td><td class="markdownTableBodyNone">The whitespace-separated value parsed as <code>std::vector&lt;T&gt;</code>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>GetVector&lt;T&gt;(section, name, default_vector)</code>   </td><td class="markdownTableBodyNone">Same, but returns <code>default_vector</code> instead of throwing    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>InsertEntry(section, name, value)</code>   </td><td class="markdownTableBodyNone">Add a new entry (scalar or <code>std::vector</code>); throws if the key already exists    </td></tr>
+<td class="markdownTableBodyNone"><code>GetVector&lt;T&gt;(section, name, default_vector)</code>   </td><td class="markdownTableBodyNone">Same, but returns <code>default_vector</code> instead of throwing    </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>InsertEntry(section, name, value)</code>   </td><td class="markdownTableBodyNone">Add a new entry (scalar or <code>std::vector</code>); throws if the key already exists    </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>UpdateEntry(section, name, value)</code>   </td><td class="markdownTableBodyNone">Overwrite an existing entry (scalar or <code>std::vector</code>); throws if the key does not exist   </td></tr>
 </table>
 <p><code>T</code> can be <code>std::string</code>, <code>bool</code> (accepts <code>1/0/true/false/yes/no/on/off</code>, case-insensitive), any integer or floating-point type, or any custom type readable from a stream with <code>operator&gt;&gt;</code>.</p>
@@ -157,8 +163,15 @@ $(function(){ initResizable(false); });
 <td class="markdownTableBodyNone"><code>INIWriter::write(filepath, reader, overwrite = false)</code>   </td><td class="markdownTableBodyNone">Dump an <code>INIReader</code>'s content to a file; unless <code>overwrite</code> is true, throws if the file already exists   </td></tr>
 </table>
 <h1>Install</h1>
-<p>Simply copy the header file <code><a class="el" href="ini_8h_source.html">ini/ini.h</a></code> to your project, then done. </p>
-</div></div><!-- PageDoc -->
+<h2>Manual</h2>
+<p>Simply copy the header file <code><a class="el" href="ini_8h_source.html">ini/ini.h</a></code> to your project, then done.</p>
+<h2>vcpkg</h2>
+<p>ini-cpp is in the <a href="https://github.com/microsoft/vcpkg/tree/master/ports/ini-cpp">vcpkg registry</a>:</p>
+<div class="fragment"><div class="line">vcpkg install ini-cpp</div>
+</div><!-- fragment --><p>It is header-only, so consume it from CMake via <code>find_path</code>:</p>
+<div class="fragment"><div class="line">find_path(INI_CPP_INCLUDE_DIRS &quot;ini/ini.h&quot;)</div>
+<div class="line">target_include_directories(main PRIVATE ${INI_CPP_INCLUDE_DIRS})</div>
+</div><!-- fragment --> </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
 <!-- start footer part -->

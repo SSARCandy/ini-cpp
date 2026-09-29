@@ -39,6 +39,13 @@ int main() {
 }
 ```
 
+Ini content that is already in memory (a `std::string`, `std::string_view` or string literal, handy in unit tests) can be parsed without touching the file system:
+
+```cpp
+const auto r = inih::INIReader::FromString("[section1]\nany = 5\n");
+const auto v = r.Get<int>("section1", "any"); // 5
+```
+
 To learn more, please refer to [test folder](https://github.com/SSARCandy/ini-cpp/tree/master/test), it covered ALL utilities.
 
 ## API
@@ -51,6 +58,7 @@ All APIs live in namespace `inih`. All errors are reported by throwing `std::run
 | --- | --- |
 | `INIReader(const std::string& filename)` | Parse the given ini file; throws on missing file, syntax error (with line number) or duplicate keys |
 | `INIReader(FILE* file)` | Same, but reads from an already-opened `FILE*` (the caller keeps ownership) |
+| `INIReader::FromString(std::string_view content)` | Same, but parses ini text held in memory (a `std::string`, `std::string_view` or string literal) instead of a file |
 | `Sections()` | All section names, as `std::set<std::string>` |
 | `Keys(section)` | All key names in the given section, as `std::set<std::string>` |
 | `Get(section)` | The whole section, as `std::unordered_map<std::string, std::string>` |

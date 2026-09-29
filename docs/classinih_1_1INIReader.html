@@ -90,6 +90,7 @@ $(function(){ initResizable(false); });
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classinih_1_1INIReader-members.html">List of all members</a>  </div>
@@ -154,6 +155,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abfdb9985c4e1ec6f5f9c234e5ef6072e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abfdb9985c4e1ec6f5f9c234e5ef6072e">UpdateEntry</a> (const std::string &amp;section, const std::string &amp;name, const std::vector&lt; T &gt; &amp;vs)</td></tr>
 <tr class="memdesc:abfdb9985c4e1ec6f5f9c234e5ef6072e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a vector of values in the INI file.  <br /></td></tr>
 <tr class="separator:abfdb9985c4e1ec6f5f9c234e5ef6072e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:aab2fd355a2c449b7c7134e9f170bdb55" id="r_aab2fd355a2c449b7c7134e9f170bdb55"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classinih_1_1INIReader.html">INIReader</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab2fd355a2c449b7c7134e9f170bdb55">FromString</a> (std::string_view content)</td></tr>
+<tr class="memdesc:aab2fd355a2c449b7c7134e9f170bdb55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an <a class="el" href="classinih_1_1INIReader.html" title="Read an INI file into easy-to-access name/value pairs.">INIReader</a> object from in-memory ini content.  <br /></td></tr>
+<tr class="separator:aab2fd355a2c449b7c7134e9f170bdb55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -270,6 +277,45 @@ std::unordered_map&lt; std::string, std::unordered_map&lt; std::string, std::str
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aab2fd355a2c449b7c7134e9f170bdb55" name="aab2fd355a2c449b7c7134e9f170bdb55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab2fd355a2c449b7c7134e9f170bdb55">&#9670;&#160;</a></span>FromString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classinih_1_1INIReader.html">INIReader</a> inih::INIReader::FromString </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>content</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct an <a class="el" href="classinih_1_1INIReader.html" title="Read an INI file into easy-to-access name/value pairs.">INIReader</a> object from in-memory ini content. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">content</td><td>The ini text to parse (e.g. a string literal embedded in a unit test); it is not interpreted as a file name </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>if there is an error parsing the content </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a682e4399dd5802110f8b9375f6551e4a" name="a682e4399dd5802110f8b9375f6551e4a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a682e4399dd5802110f8b9375f6551e4a">&#9670;&#160;</a></span>Get() <span class="overload">[1/3]</span></h2>
 

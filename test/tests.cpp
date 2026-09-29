@@ -179,6 +179,49 @@ TEST(INIReader, from_file_pointer) {
     EXPECT_EQ(r.ParseError(), 0);
 }
 
+TEST(INIReader, from_string) {
+    // std::string_view (a string literal), no file involved
+    const auto r = INIReader::FromString(
+        "; comment\n"
+        "[s]\n"
+        "a = 1\n"
+        "b = x y z ; inline comment\n"
+        "[t]\n"
+        "c : yes\n");
+    const std::set<std::string> ans = {"s", "t"};
+    EXPECT_EQ(r.Sections(), ans);
+    EXPECT_EQ(r.Get<int>("s", "a"), 1);
+    EXPECT_EQ(r.GetVector<std::string>("s", "b"),
+              (std::vector<std::string>{"x", "y", "z"}));
+    EXPECT_EQ(r.Get<bool>("t", "c"), true);
+
+    // std::string, with a BOM and CRLF line endings
+    const std::string content = "\xEF\xBB\xBF[s]\r\nk = v\r\n";
+    EXPECT_EQ(INIReader::FromString(content).Get("s", "k"), "v");
+
+    // empty content is a valid (empty) config
+    EXPECT_EQ(INIReader::FromString("").Sections(), std::set<std::string>{});
+
+    // the resulting object is mutable like any other INIReader
+    auto m = INIReader::FromString("[s]\na = 1\n");
+    m.UpdateEntry("s", "a", 2);
+    m.InsertEntry("s", "b", 3);
+    EXPECT_EQ(m.Get<int>("s", "a"), 2);
+    EXPECT_EQ(m.Get<int>("s", "b"), 3);
+}
+
+TEST(INIReader, from_string_errors) {
+    try {
+        INIReader::FromString("[s]\na = 1\nbad line\n");
+        FAIL() << "expected std::runtime_error";
+    } catch (const std::runtime_error& e) {
+        EXPECT_STREQ(e.what(), "parse error on line no: 3");
+    }
+    EXPECT_THROW(INIReader::FromString("[s\n"), std::runtime_error);
+    EXPECT_THROW(INIReader::FromString("[s]\na = 1\na = 2\n"),
+                 std::runtime_error);
+}
+
 TEST(INIReader, utf8_bom) {
     write_file("./fixtures/gen_bom.ini", "\xEF\xBB\xBF[s]\nk = 1\n");
     INIReader r{"./fixtures/gen_bom.ini"};
